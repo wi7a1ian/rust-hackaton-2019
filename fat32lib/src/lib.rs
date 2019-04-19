@@ -12,6 +12,16 @@ fn io_read(path: &str, start_sector: u64, count: u64) -> Vec<u8>
     buffer
 }
 
+struct MbrStruct
+{
+    i : i32,
+}
+
+fn to_struct(v : &Vec<u8>) -> MbrStruct
+{
+    let s: MbrStruct = unsafe { std::ptr::read(v.as_ptr() as *const _) };
+    s
+}
 
 #[cfg(test)]
 mod tests;
