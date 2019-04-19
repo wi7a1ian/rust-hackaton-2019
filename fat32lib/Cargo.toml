@@ -4,4 +4,8 @@ version = "0.1.0"
 authors = ["Wit <witalian.zajac@gmail.com>"]
 edition = "2018"
 
+[lib]
+name = "fat32lib"
+crate-type = ["dylib"]
+
 [dependencies]

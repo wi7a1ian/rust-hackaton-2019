@@ -1,0 +1,4 @@
+[[package]]
+name = "fat32lib"
+version = "0.1.0"
+
