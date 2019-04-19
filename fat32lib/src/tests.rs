@@ -1,5 +1,6 @@
 use super::*;
 use std::mem;
+use std::str;
 
 #[test]
 fn io_read_can_read_from_drive() {
@@ -55,7 +56,6 @@ fn check_if_mbr_has_valid_partition_position() {
 fn check_if_bpb_has_valid_data() {
     const partition_start : u64 = 128;
     let mut memo = io_read(r#"\\.\PHYSICALDRIVE1"#, partition_start, 1);
-    let sig = [0x55, 0xAA];
 
     let bpb : BpbStruct = to_struct(&memo);
 
@@ -68,4 +68,45 @@ fn check_if_bpb_has_valid_data() {
 
     let fat_data_start = partition_start + bpb.reserved as u64 + (bpb.fatCnt as u64 * bpb.fat32Secs as u64);
     assert_eq!(fat_data_start, 16512);
+}
+
+#[test]
+fn check_if_fat_dir_struct_is_valid() {
+    const fat_dir_start : u64 = 16512;
+    let mut memo = io_read(r#"\\.\PHYSICALDRIVE1"#, fat_dir_start, 1);
+
+    let bpb : Fat32DirStruct = to_struct(&memo);
+    
+    let volume_label = str::from_utf8(&bpb.name).unwrap();
+    assert_eq!(volume_label, r#"RUST-HACKA "#);
+}
+
+#[test]
+fn iterate_over_root_dir_entries() {
+    const fat_dir_start : u64 = 16512;
+    let entry_size = std::mem::size_of::<Fat32DirStruct>();
+
+    let mut memo = io_read(r#"\\.\PHYSICALDRIVE1"#, fat_dir_start, 1);
+
+    let mut index : usize = 0;
+    loop
+    {
+        let entryStart = index*entry_size;
+        let entryEnd = (index+1)*entry_size;
+
+        let fat32_entry : Fat32DirStruct = to_struct(&memo[entryStart..entryEnd].to_vec());
+
+        if (fat32_entry.name[0] == 0 || fat32_entry.name[0] == 0xe5 )
+        {
+            break;
+        }
+        else
+        {
+            index += 1;
+        }
+
+        println!("Name: {:#?} Start cluster: {:#?} File size: {:#?} Create date: {}", str::from_utf8(&fat32_entry.name).unwrap(), &fat32_entry.start_cluster, fat32_entry.file_size, fat32_entry.create_date);
+    }
+
+    assert_eq!(true, true);
 }

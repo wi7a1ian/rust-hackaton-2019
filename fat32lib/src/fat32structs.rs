@@ -74,3 +74,23 @@ pub struct BpbStruct
 	pub volumeLabel : [u8; BPB_LABEL_SIZE],		/* Volume label               */
 	pub fileSysType: [u8; BPB_SYSTYPE_SIZE],		/* File system (FAT32)      */
 }
+
+#[repr(C,packed)]
+pub struct Fat32DirStruct 
+{
+		pub name : [u8; 11],                      /* File or directory name     */
+		pub attribute : u8,                     /* File attribute             */
+
+		pub reserved3 : u8,                      /* Reserved by Windows NT     */
+		pub create_mil : u8,                      /* Millisecond stamp at create*/
+		pub create_time : u16,                    /* Creation time              */
+		pub create_date : u16,                    /* Creation date              */
+		pub access_date : u16,                  /* Last accessed date         */
+		pub start_cluster_hi : u16,                /* High word of starting clust*/
+
+		pub time : u16,                          /* DOS time                   */
+		pub date : u16,                          /* DOS date                   */
+
+		pub start_cluster : u16,                  /* Starting cluster number    */
+		pub file_size : u32,                       /* Size of the file           */
+	}
