@@ -50,3 +50,22 @@ fn check_if_mbr_has_valid_partition_position() {
     assert_eq!(mbr.partition[0].sectorCnt, 4_188_160);
     assert_eq!(mbr.partition[0].relativeSector, 128);
 }
+
+#[test]
+fn check_if_bpb_has_valid_data() {
+    const partition_start : u64 = 128;
+    let mut memo = io_read(r#"\\.\PHYSICALDRIVE1"#, partition_start, 1);
+    let sig = [0x55, 0xAA];
+
+    let bpb : BpbStruct = to_struct(&memo);
+
+    assert_eq!(bpb.reserved, 8234);
+    assert_eq!(bpb.fatCnt, 2);
+    assert_eq!(bpb.fat32Secs, 4075);
+    assert_eq!(bpb.rootCluster, 2);
+    assert_eq!(bpb.secSize, 512);
+    assert_eq!(bpb.secsPerCluster, 8);
+
+    let fat_data_start = partition_start + bpb.reserved as u64 + (bpb.fatCnt as u64 * bpb.fat32Secs as u64);
+    assert_eq!(fat_data_start, 16512);
+}
