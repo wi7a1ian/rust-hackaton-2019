@@ -1,5 +1,5 @@
-use std::mem;
 use super::*;
+use std::mem;
 
 #[test]
 fn io_read_can_read_from_drive() {
@@ -19,7 +19,6 @@ fn check_if_mbr_has_valid_signature() {
     assert_eq!(signature[0],expected[0]);
     assert_eq!(signature[1],expected[1]);
 }
-
 
 #[test]
 fn typecasting_is_working() {
@@ -47,7 +46,7 @@ fn check_if_mbr_has_valid_partition_position() {
     
     let mbr : MbrStruct = to_struct(&first_sector);
 
-    assert_eq!(mem::size_of::<PartitionTableStruct>(), 16 as usize)
+    assert_eq!(mem::size_of::<PartitionTableStruct>(), 16 as usize);
     assert_eq!(mbr.partition[0].sectorCnt, 4_188_160);
-    //assert_eq!(mbr.partition[0].relativeSector, 128);
+    assert_eq!(mbr.partition[0].relativeSector, 128);
 }

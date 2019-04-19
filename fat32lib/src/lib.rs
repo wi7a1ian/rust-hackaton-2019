@@ -1,32 +1,8 @@
 use std::fs::File;
 use std::io::Read;
 
-struct PartitionTableStruct
-{
-	bootIndicator : u8,         /* Boot flags                 */
-	startingHead : u8,          /* Starting head              */
-    startingSector : u8,        /* Starting sector            */
-	startingCylinder : u8,      /* Starting cylinder          */
-
-	systemID : u8,              /* 2:Xenix, 5:X-DOS, 7:HPFS,  */
-						        /* 99:UNIX, 100-104:NetWare,  */
-							    /* 196-198:DRDOS, 0,1,3,4,6,  */
-						        /* 8,9:DOS,219:Concurrent DOS,*/
-						        /* 80-84:Ontrack, B,C:FAT32   */
-	endingHead : u8,            /* Partition ending head      */
-	endingSector : u8,          /* Partition ending sector    */
-	endingCylinder : u8,        /* Partition ending cylinder  */
-
-    relativeSector : u32,       /* Relative parition addr     */
-	sectorCnt : u32             /* Num sectors in partition   */
-}
-
-struct MbrStruct
-{
-	bootCode : [u8;446],
-	partition : [PartitionTableStruct;4],
-	signature: [u8;2]
-}
+mod fat32structs;
+pub use fat32structs::*;
 
 fn io_read(path: &str, start_sector: u64, count: u64) -> Vec<u8>
 {
