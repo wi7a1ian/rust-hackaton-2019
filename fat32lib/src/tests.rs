@@ -91,7 +91,7 @@ fn iterate_over_root_dir_entries() {
 
     let mut memo = io_read(r#"\\.\PHYSICALDRIVE1"#, fat_dir_start, 1);
 
-    let is_zeroed = |entry: &Vec<u8>| -> bool {
+    let is_zeroed = |entry: &[u8]| -> bool {
         let non_zero_bytes: Vec<_> = entry
             .iter()
             .filter_map(|byte| if *byte == 0u8 { None } else { Some(true) })
