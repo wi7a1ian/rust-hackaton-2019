@@ -1,19 +1,22 @@
+use std::io::{Read, SeekFrom, ErrorKind, prelude::*};
 use std::fs::File;
-use std::io;
-use std::io::prelude::*;
-use std::io::Read;
-use std::io::SeekFrom;
 
 mod fat32structs;
 pub use fat32structs::*;
 
-fn io_read(path: &str, start_sector: u64, count: u64) -> Vec<u8> {
-    const sector_size: usize = 512;
+pub fn io_read(path: &str, start_sector: u64, count: u64) -> Vec<u8> {
+    const SECTOR_SIZE: usize = 512;
     let mut handle = File::open(path).unwrap();
 
-    let mut buffer = vec![0u8; sector_size * count as usize];
-    handle.seek(SeekFrom::Start(sector_size as u64 * start_sector));
-    handle.read_exact(&mut buffer);
+    let mut buffer = vec![0u8; SECTOR_SIZE * count as usize];
+    let _offset = handle.seek(SeekFrom::Start(SECTOR_SIZE as u64 * start_sector));
+
+    let res = handle.read_exact(&mut buffer);
+    match res {
+        Ok(_) => println!("Read {} into buffer", &buffer.len()),
+        Err(ref err) if err.kind() == ErrorKind::UnexpectedEof 
+                                        || err.kind() == ErrorKind::Interrupted
+    }
 
     buffer
 }
