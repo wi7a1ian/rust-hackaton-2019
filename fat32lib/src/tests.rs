@@ -14,7 +14,6 @@ fn check_if_mbr_has_valid_signature() {
     let first_sector = io_read(r#"\\.\PHYSICALDRIVE1"#, 0, 1);
     let signature = &first_sector[510..512];
     let expected = [0x55, 0xAA];
-
     for character in signature {
         print!("{:x?} ", character);
     }
@@ -24,6 +23,7 @@ fn check_if_mbr_has_valid_signature() {
 }
 
 #[test]
+
 fn is_typecasting_working() {
     struct SomeStruct {
         i: i32,
@@ -70,6 +70,7 @@ fn check_if_bpb_has_valid_data() {
 
     let fat_data_start =
         PARTITION_START + bpb.reserved as u64 + (bpb.fatCnt as u64 * bpb.fat32Secs as u64);
+
     assert_eq!(fat_data_start, 16512);
 }
 
@@ -110,6 +111,7 @@ fn should_iterate_over_root_dir_entries() {
             break;
         } else {
             index += 1;
+
             let fat32_entry: Fat32DirStruct = entry_memory_slice.to_struct();
 
             unsafe {
