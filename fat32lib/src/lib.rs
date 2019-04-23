@@ -1,3 +1,4 @@
+use std::mem;
 use std::fs::File;
 use std::io::{prelude::*, ErrorKind, Read, SeekFrom};
 
@@ -25,8 +26,14 @@ pub fn io_read(path: &str, start_sector: u64, count: u64) -> Vec<u8> {
     buffer
 }
 
+/* TODO: add limitation that T is a struct */
 fn to_struct<T>(v : &[u8]) -> T
 {
+    if v.len() < mem::size_of::<T>()
+    {
+        panic!("Memory buffer is too small")
+    }
+
     let s: T = unsafe { std::ptr::read(v.as_ptr() as *const _) };
     s
 }
