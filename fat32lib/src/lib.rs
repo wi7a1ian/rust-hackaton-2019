@@ -25,7 +25,7 @@ pub fn io_read(path: &str, start_sector: u64, count: u64) -> Vec<u8> {
     buffer
 }
 
-fn to_struct<T>(v : &Vec<u8>) -> T
+fn to_struct<T>(v : &[u8]) -> T
 {
     let s: T = unsafe { std::ptr::read(v.as_ptr() as *const _) };
     s
