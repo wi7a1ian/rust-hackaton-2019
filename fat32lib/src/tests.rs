@@ -23,8 +23,18 @@ fn check_if_mbr_has_valid_signature() {
 }
 
 #[test]
-
 fn is_typecasting_working() {
+    struct SomeStruct {
+        i: i32,
+    }
+    let one_elem_vec: Vec<u8> = vec![5, 0, 0, 0];
+    let s: SomeStruct = to_struct(&one_elem_vec);
+
+    assert_eq!(5, s.i);
+}
+
+#[test]
+fn is_typecasting_trait_working() {
     struct SomeStruct {
         i: i32,
     }
@@ -49,8 +59,8 @@ fn check_if_mbr_has_valid_partition_position() {
 
     assert_eq!(mem::size_of::<PartitionTableStruct>(), 16 as usize);
     unsafe {
-        assert_eq!(mbr.partition[0].sectorCnt, 4_188_160);
-        assert_eq!(mbr.partition[0].relativeSector, 128);
+        assert_eq!(mbr.partition[0].sector_cnt, 4_188_160);
+        assert_eq!(mbr.partition[0].relative_sector, 128);
     }
 }
 
@@ -61,15 +71,15 @@ fn check_if_bpb_has_valid_data() {
 
     unsafe {
         assert_eq!(bpb.reserved, 8234);
-        assert_eq!(bpb.fatCnt, 2);
-        assert_eq!(bpb.fat32Secs, 4075);
-        assert_eq!(bpb.rootCluster, 2);
-        assert_eq!(bpb.secSize, 512);
-        assert_eq!(bpb.secsPerCluster, 8);
+        assert_eq!(bpb.fat_cnt, 2);
+        assert_eq!(bpb.fat32_secs, 4075);
+        assert_eq!(bpb.root_cluster, 2);
+        assert_eq!(bpb.sec_size, 512);
+        assert_eq!(bpb.secs_per_cluster, 8);
     }
 
     let fat_data_start =
-        PARTITION_START + bpb.reserved as u64 + (bpb.fatCnt as u64 * bpb.fat32Secs as u64);
+        PARTITION_START + bpb.reserved as u64 + (bpb.fat_cnt as u64 * bpb.fat32_secs as u64);
 
     assert_eq!(fat_data_start, 16512);
 }
